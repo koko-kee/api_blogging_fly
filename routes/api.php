@@ -20,22 +20,27 @@ Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 
 Route::prefix('/articles')
-    ->middleware('auth:sanctum')
     ->group(function (){
 
         Route::get('',[\App\Http\Controllers\ArticleController::class,'index']);
         Route::post('/store',[\App\Http\Controllers\ArticleController::class,'store']);
-        Route::post('/show/{id}',[\App\Http\Controllers\ArticleController::class,'show']);
+        Route::post('/{id}',[\App\Http\Controllers\ArticleController::class,'show']);
         Route::post('/update/{id}',[\App\Http\Controllers\ArticleController::class,'update']);
         Route::post('/delele/{id}',[\App\Http\Controllers\ArticleController::class,'delete']);
 
     });
 
-Route::prefix('/comment/')
+Route::prefix('/article/like')
+    ->middleware('auth:sanctum')
+    ->group(function (){
+        Route::post('/{id}',[\App\Http\Controllers\CommentController::class,'create']);
+    });
+
+Route::prefix('/comments/')
     ->middleware('auth:sanctum')
     ->group(function (){
         Route::post('/article/{id}',[\App\Http\Controllers\CommentController::class,'create']);
-        Route::post('/article/update/{id}',[\App\Http\Controllers\CommentController::class,'update']);
+        Route::post('/update/{id}',[\App\Http\Controllers\CommentController::class,'update']);
     });
 
 

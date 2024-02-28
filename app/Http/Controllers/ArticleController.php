@@ -10,21 +10,27 @@ class ArticleController extends Controller
 {
     public  function index()
     {
-        $articles = Article::orderBy('created_at','desc')->get();
-        return response(['articles' => $articles],200);
+        $articles = Article::select(['id','title','description','user_id','categorie_id'])
+            ->orderBy('created_at','desc')
+            ->get();
+        return response($articles,200);
     }
 
     public function show(int $id)
     {
-        $article = Article::find($id);
+        $article = Article::select(['id','title','description','user_id','categorie_id'])
+            ->where('id' , $id)
+            ->first();
         return response(['article' => $article],200);
     }
     public function store(Request $request)
     {
         $request->validate([
+
             'title' => ['required','string'],
             'description' => ['required','string']
         ]);
+
         \auth()->user()->articles()
             ->create([
                 'title' => $request->title,
