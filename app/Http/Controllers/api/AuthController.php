@@ -13,29 +13,41 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
 
-   public function register(RegisterRequest $request) {
+   public function register(Request $request) {
 
-      $request->validated();
+       $validator = Validator::make($request->all(), [
 
-      $userData = [
+           'name' => ['required','string','min:3'],
+           'username' => ['required','string','min:3'],
+           'email' => ['required','string','email','unique:users,email,except,id'],
+           'password' => ['required']
 
-         'name' => $request->name,
-         'username' => $request->username,
-         'email' => $request->email,
-         'password' => Hash::make($request->password)
+       ]);
 
-      ];
+       if ($validator->fails()) {
 
-      $user = User::create($userData);
-      $token = $user->createToken('api')->plainTextToken;
-      return response(['user' => $user, 'token' => $token],201);
+           return  response(['error'=>  $validator->errors()],422);
+       }
+
+       $userData = [
+           'name' => $request->name,
+           'username' => $request->username,
+           'email' => $request->email,
+           'password' => Hash::make($request->password)
+       ];
+
+       $user = User::create($userData);
+       $token = $user->createToken('api')->plainTextToken;
+       return response(['user' => $user, 'token' => $token],201);
+
+
    }
 
    public function login(loginRequest $request){
 
      $request->validated();
 
-      $user = User::where('username',$request->username)->first();
+      $user = User::where('email',$request->email)->first();
 
       if($user && Hash::check($request->password,$user->password)){
 
