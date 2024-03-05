@@ -7,6 +7,7 @@ use App\Http\Requests\loginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -62,6 +63,16 @@ class AuthController extends Controller
 
       }
       return response(['message' => 'email ou password incorrect'],422);
+
+   }
+
+
+   public function logout(Request $request)
+   {
+       auth()->user()->tokens()->delete();
+       return [
+           'message' => 'user logged out'
+       ];
 
    }
 }

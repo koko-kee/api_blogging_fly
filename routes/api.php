@@ -16,12 +16,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
+Route::post('/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
+
+Route::prefix('/article/like')
+    ->middleware('auth:sanctum')
+    ->group(function (){
+        Route::post('/{id}',[\App\Http\Controllers\LikeController::class,'like']);
+        Route::get('/{id}',[\App\Http\Controllers\LikeController::class,'like']);
+    });
 
 Route::prefix('/articles')
+    ->middleware(['auth:sanctum'])
     ->group(function (){
-
         Route::get('',[\App\Http\Controllers\ArticleController::class,'index']);
         Route::post('/store',[\App\Http\Controllers\ArticleController::class,'store']);
         Route::post('/{id}',[\App\Http\Controllers\ArticleController::class,'show']);
@@ -30,11 +39,8 @@ Route::prefix('/articles')
 
     });
 
-Route::prefix('/article/like')
-    ->middleware('auth:sanctum')
-    ->group(function (){
-        Route::post('/{id}',[\App\Http\Controllers\CommentController::class,'create']);
-    });
+
+
 
 Route::prefix('/comments/')
     ->middleware('auth:sanctum')

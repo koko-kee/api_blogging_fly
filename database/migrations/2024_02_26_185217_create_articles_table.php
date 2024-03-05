@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
             $table->text('description');
+            $table->text('media');
+            $table->string('type_media')->default('image');
             $table->foreignIdFor(\App\Models\User::class);
             $table->foreignIdFor(\App\Models\Categorie::class);
             $table->timestamps();
